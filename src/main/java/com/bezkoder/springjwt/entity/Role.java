@@ -2,13 +2,14 @@ package com.bezkoder.springjwt.entity;
 import com.bezkoder.springjwt.models.ERole;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name="roles")
 @Data
-@Builder
+@NoArgsConstructor
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,7 +18,4 @@ public class Role {
     private ERole name;
 
 
-    public Role() {
-
-    }
 }
