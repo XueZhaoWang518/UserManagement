@@ -1,5 +1,6 @@
 package com.bezkoder.springjwt.controller;
 
+import com.bezkoder.springjwt.payload.request.SigninRequest;
 import com.bezkoder.springjwt.payload.request.SignupRequest;
 import com.bezkoder.springjwt.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,11 @@ public class AuthController {
     public ResponseEntity<?>  registerUser(@Valid @RequestBody SignupRequest signupRequest)
     {
         return userService.addUser(signupRequest.getUsername(), signupRequest.getEmail(), signupRequest.getPassword(), signupRequest.getRoles());
+    }
+
+    @PostMapping("/signin")
+    public ResponseEntity<?> loginUser(@Valid @RequestBody SigninRequest signinRequest){
+        return userService.loginUser(signinRequest.getUsername(), signinRequest.getPassword());
     }
 
 
