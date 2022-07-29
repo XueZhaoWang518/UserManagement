@@ -1,4 +1,4 @@
-package com.bezkoder.springjwt.models;
+package com.bezkoder.springjwt.entity;
 
 public enum ERole {
     ROLE_USER,

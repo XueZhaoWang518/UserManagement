@@ -1,6 +1,4 @@
 package com.bezkoder.springjwt.entity;
-import com.bezkoder.springjwt.models.ERole;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

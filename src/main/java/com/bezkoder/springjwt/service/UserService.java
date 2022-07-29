@@ -2,7 +2,7 @@ package com.bezkoder.springjwt.service;
 
 import com.bezkoder.springjwt.entity.Role;
 import com.bezkoder.springjwt.entity.User;
-import com.bezkoder.springjwt.models.ERole;
+import com.bezkoder.springjwt.entity.ERole;
 import com.bezkoder.springjwt.payload.response.MessageResponse;
 import com.bezkoder.springjwt.repository.RoleRepository;
 import com.bezkoder.springjwt.repository.UserRepository;
