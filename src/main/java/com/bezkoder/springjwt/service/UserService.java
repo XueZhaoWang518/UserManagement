@@ -66,11 +66,17 @@ public class UserService {
 
     }
 
-    public ResponseEntity<?> loginUser(String username, String password) {
-        if(!userRepository.existsByUsername(username)) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error:Username is not exist at all!"));
+    public ResponseEntity<?> loginUser(String user, String password) {
+        String cpassword = null;
+        if(!(userRepository.existsByUsername(user)||userRepository.existsByEmail(user))) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error:User is not exist at all!"));
         }
-        String cpassword = userRepository.findByUsername(username).get().getPassword();
+        else if(userRepository.existsByUsername(user)){
+             cpassword = new String(userRepository.findByUsername(user).get().getPassword());
+        }
+        else if(userRepository.existsByEmail(user)){
+            cpassword = new String(userRepository.findByEmail(user).get().getPassword());
+        }
         if (!password.equals(cpassword)) {
             return ResponseEntity.badRequest().body(new MessageResponse("Error:Password is wrong, please enter again"));
         }

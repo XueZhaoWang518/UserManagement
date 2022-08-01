@@ -26,7 +26,7 @@ public class AuthController {
 
     @PostMapping("/signin")
     public ResponseEntity<?> loginUser(@Valid @RequestBody SigninRequest signinRequest){
-        return userService.loginUser(signinRequest.getUsername(), signinRequest.getPassword());
+        return userService.loginUser(signinRequest.getUser(), signinRequest.getPassword());
     }
 
 
