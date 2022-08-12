@@ -1,4 +1,4 @@
-package com.bezkoder.springjwt.entity;
+package com.spring.usermanagement.entity;
 
 public enum ERole {
     ROLE_USER,

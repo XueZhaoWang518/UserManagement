@@ -1,5 +1,4 @@
-package com.bezkoder.springjwt.entity;
-import com.bezkoder.springjwt.entity.Role;
+package com.spring.usermanagement.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -38,13 +37,19 @@ public class User{
     @Size(max=120)
     private String password;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="user_roles",
                joinColumns = @JoinColumn(name = "user_id"),
                inverseJoinColumns = @JoinColumn(name="role_id"))
     private Set<Role> roles = new HashSet<>();
 
-
-
+    public User(String username, String email, String password) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+    }
+//
+//    @NotBlank
+//    private boolean isActive;
 
 }

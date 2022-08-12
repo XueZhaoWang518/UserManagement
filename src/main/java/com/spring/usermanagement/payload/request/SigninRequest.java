@@ -1,4 +1,4 @@
-package com.bezkoder.springjwt.payload.request;
+package com.spring.usermanagement.payload.request;
 
 import lombok.Data;
 

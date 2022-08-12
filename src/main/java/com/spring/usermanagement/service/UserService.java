@@ -1,23 +1,40 @@
-package com.bezkoder.springjwt.service;
+package com.spring.usermanagement.service;
 
-import com.bezkoder.springjwt.entity.Role;
-import com.bezkoder.springjwt.entity.User;
-import com.bezkoder.springjwt.entity.ERole;
-import com.bezkoder.springjwt.payload.response.MessageResponse;
-import com.bezkoder.springjwt.repository.RoleRepository;
-import com.bezkoder.springjwt.repository.UserRepository;
+import com.spring.usermanagement.entity.Role;
+import com.spring.usermanagement.entity.User;
+import com.spring.usermanagement.entity.ERole;
+import com.spring.usermanagement.payload.response.JwtResponse;
+import com.spring.usermanagement.payload.response.MessageResponse;
+import com.spring.usermanagement.repository.RoleRepository;
+import com.spring.usermanagement.repository.UserRepository;
+import com.spring.usermanagement.security.jwt.JwtUtils;
+import com.spring.usermanagement.security.service.UserDetailsImpls;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+
 @Service
 public class UserService {
+    @Autowired
+    AuthenticationManager authenticationManager;
     @Autowired
     UserRepository userRepository;
     @Autowired
     RoleRepository roleRepository;
+    @Autowired
+    JwtUtils jwtUtils;
+    @Autowired
+    PasswordEncoder encoder;
 
     public ResponseEntity<?> addUser(String username, String email, String password, Set<String> roles ) {
         if(userRepository.existsByUsername(username)){
@@ -58,7 +75,7 @@ public class UserService {
         User user = new User();
         user.setUsername(username);
         user.setEmail(email);
-        user.setPassword(password);
+        user.setPassword(encoder.encode(password));
         user.setRoles(roleSet);
         userRepository.save(user);
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
@@ -66,23 +83,21 @@ public class UserService {
 
     }
 
-    public ResponseEntity<?> loginUser(String user, String password) {
-        String cpassword = null;
-        if(!(userRepository.existsByUsername(user)||userRepository.existsByEmail(user))) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error:User is not exist at all!"));
+    public ResponseEntity<?> updatePassword(String userMessage, String password) {
+        if(userRepository.existsByUsername(userMessage)){
+            User user = userRepository.findByUsername(userMessage).get();
+            user.setPassword(password);
+            userRepository.saveAndFlush(user);
+            return ResponseEntity.ok(new MessageResponse("User update password successfully!"));
         }
-        else if(userRepository.existsByUsername(user)){
-             cpassword = new String(userRepository.findByUsername(user).get().getPassword());
+        else if(userRepository.existsByEmail(userMessage)){
+            User user = userRepository.findByUsername(userMessage).get();
+            user.setPassword(encoder.encode(password));
+            userRepository.saveAndFlush(user);
+            return ResponseEntity.ok(new MessageResponse("User update password successfully!"));
         }
-        else if(userRepository.existsByEmail(user)){
-            cpassword = new String(userRepository.findByEmail(user).get().getPassword());
-        }
-        if (!password.equals(cpassword)) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error:Password is wrong, please enter again"));
-        }
-        else
-        {
-            return ResponseEntity.ok(new MessageResponse("User login successfully!"));
+        else{
+            return ResponseEntity.badRequest().body(new MessageResponse("Error:User is not exist!"));
         }
 
     }
