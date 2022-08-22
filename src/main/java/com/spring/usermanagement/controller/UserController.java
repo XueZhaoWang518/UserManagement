@@ -25,19 +25,19 @@ public class UserController {
 
     @GetMapping("/all")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    private String userAccess() {
+    public String userAccess() {
         return "Could see the user Content.";
     }
 
     @PostMapping("/update/password")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    private ResponseEntity<?> updateUserPassword(@Valid @RequestBody SigninRequest signinRequest) {
+    public ResponseEntity<?> updateUserPassword(@Valid @RequestBody SigninRequest signinRequest) {
         return userService.updatePassword(signinRequest.getUser(), signinRequest.getPassword());
     }
 
     @PostMapping("/moderate/role")
     @PreAuthorize("hasRole('MODERATOR')")
-    private ResponseEntity<?> updateUserRole(@Valid @RequestBody UpdateRoleRequest updateRoleRequest) {
+    public ResponseEntity<?> updateUserRole(@Valid @RequestBody UpdateRoleRequest updateRoleRequest) {
         return userService.updateRole(updateRoleRequest.getUser(), updateRoleRequest.getRoles());
     }
 

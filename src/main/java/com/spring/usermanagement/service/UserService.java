@@ -3,33 +3,40 @@ package com.spring.usermanagement.service;
 import com.spring.usermanagement.entity.Role;
 import com.spring.usermanagement.entity.User;
 import com.spring.usermanagement.entity.ERole;
+import com.spring.usermanagement.payload.response.JwtResponse;
 import com.spring.usermanagement.payload.response.MessageResponse;
 import com.spring.usermanagement.repository.RoleRepository;
 import com.spring.usermanagement.repository.UserRepository;
 import com.spring.usermanagement.security.jwt.JwtUtils;
+import com.spring.usermanagement.security.service.UserDetailsImpls;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
     @Autowired
-    AuthenticationManager authenticationManager;
+    private AuthenticationManager authenticationManager;
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
-    RoleRepository roleRepository;
+    private RoleRepository roleRepository;
     @Autowired
-    JwtUtils jwtUtils;
+    private JwtUtils jwtUtils;
     @Autowired
-    PasswordEncoder encoder;
+    private PasswordEncoder encoder;
 
-    public ResponseEntity<?> addUser(String username, String email, String password, Set<String> roles ) {
+    public ResponseEntity<MessageResponse> addUser(String username, String email, String password, Set<String> roles ) {
         if(userRepository.existsByUsername(username)){
             return ResponseEntity.badRequest().body(new MessageResponse("Error:Username is already taken!"));
         }
@@ -76,7 +83,26 @@ public class UserService {
 
     }
 
-    public ResponseEntity<?> updatePassword(String userMessage, String password) {
+    public ResponseEntity<JwtResponse> signIn(String user, String password){
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(user, password));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtUtils.generateJwtToken(authentication);
+
+        UserDetailsImpls userDetails = (UserDetailsImpls) authentication.getPrincipal();
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(item -> item.getAuthority())
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(new JwtResponse(jwt,
+                userDetails.getId(),
+                userDetails.getUsername(),
+                userDetails.getEmail(),
+                roles));
+    }
+
+    public ResponseEntity<MessageResponse> updatePassword(String userMessage, String password) {
         if(userRepository.existsByUsername(userMessage)){
             User user = userRepository.findByUsername(userMessage).get();
             user.setPassword(password);
@@ -95,7 +121,7 @@ public class UserService {
 
     }
 
-    public ResponseEntity<?> updateRole(String userMessage, Set<String> strRoles) {
+    public ResponseEntity<MessageResponse> updateRole(String userMessage, Set<String> strRoles) {
         Set<Role> roleSet = new HashSet<>();
 
         if (strRoles == null) {
@@ -137,4 +163,6 @@ public class UserService {
         }
 
     }
+
+
 }
