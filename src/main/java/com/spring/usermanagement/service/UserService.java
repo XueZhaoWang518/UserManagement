@@ -95,7 +95,7 @@ public class UserService {
 
     }
 
-    public ResponseEntity<MessageResponse> updateRole(String userMessage, Set<String> strRoles) {
+    public ResponseEntity<MessageResponse> updateRole(Long userId, Set<String> strRoles) {
         Set<Role> roleSet = new HashSet<>();
 
         if (strRoles == null) {
@@ -120,14 +120,8 @@ public class UserService {
                 }
             });
         }
-        if(userRepository.existsByUsername(userMessage)){
-            User user = userRepository.findByUsername(userMessage).get();
-            user.setRoles(roleSet);
-            userRepository.saveAndFlush(user);
-            return ResponseEntity.ok(new MessageResponse("User update roles successfully!"));
-        }
-        else if(userRepository.existsByEmail(userMessage)){
-            User user = userRepository.findByUsername(userMessage).get();
+        if(userRepository.existsById(userId)){
+            User user = userRepository.findById(userId).get();
             user.setRoles(roleSet);
             userRepository.saveAndFlush(user);
             return ResponseEntity.ok(new MessageResponse("User update roles successfully!"));

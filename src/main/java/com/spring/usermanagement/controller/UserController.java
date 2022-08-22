@@ -21,7 +21,7 @@ import javax.validation.Valid;
 @RequestMapping("/api/user")
 public class UserController {
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     @GetMapping("/all")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
@@ -38,7 +38,7 @@ public class UserController {
     @PostMapping("/moderate/role")
     @PreAuthorize("hasRole('MODERATOR')")
     public ResponseEntity<?> updateUserRole(@Valid @RequestBody UpdateRoleRequest updateRoleRequest) {
-        return userService.updateRole(updateRoleRequest.getUser(), updateRoleRequest.getRoles());
+        return userService.updateRole(updateRoleRequest.getId(), updateRoleRequest.getRoles());
     }
 
 
