@@ -44,34 +44,8 @@ public class UserService {
             return ResponseEntity.badRequest().body(new MessageResponse("Error:Email is already in user!"));
         }
         Set<Role> roleSet = new HashSet<>();
-        if (roles == null) {
-            Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException("Error:Role is not found."));
-            roleSet.add(userRole);
-        } else {
-            roles.forEach(role->
-            {
-                switch(role){
-                    case "admin":
-                        Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
-                                .orElseThrow(() -> new RuntimeException("Error:Role is not found."));
-                        roleSet.add(adminRole);
-                        break;
-
-                    case "mod":
-                        Role modRole = roleRepository.findByName(ERole.ROLE_MODERATOR)
-                                .orElseThrow(() -> new RuntimeException("Error:Role is not found"));
-                        roleSet.add(modRole);
-                        break;
-
-                    default:
-                        Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                                .orElseThrow(() -> new RuntimeException("Error:Role is not found."));
-                        roleSet.add(userRole);
-
-                }
-            });
-        }
+        Role role = new Role(ERole.ROLE_USER);
+        roleSet.add(role);
         User user = new User();
         user.setUsername(username);
         user.setEmail(email);
