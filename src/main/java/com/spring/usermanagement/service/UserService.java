@@ -2,11 +2,11 @@ package com.spring.usermanagement.service;
 
 import com.spring.usermanagement.entity.Role;
 import com.spring.usermanagement.entity.User;
-import com.spring.usermanagement.entity.ERole;
 import com.spring.usermanagement.payload.response.JwtResponse;
 import com.spring.usermanagement.payload.response.MessageResponse;
 import com.spring.usermanagement.repository.RoleRepository;
 import com.spring.usermanagement.repository.UserRepository;
+import com.spring.usermanagement.repository.PasswordTokenRepository;
 import com.spring.usermanagement.security.jwt.JwtUtils;
 import com.spring.usermanagement.security.service.UserDetailsImpls;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +35,10 @@ public class UserService {
     private JwtUtils jwtUtils;
     @Autowired
     private PasswordEncoder encoder;
+    @Autowired
+    private PasswordTokenRepository passwordTokenRepository;
 
-    public ResponseEntity<MessageResponse> addUser(String username, String email, String password, Set<String> roles ) {
+    public ResponseEntity<MessageResponse> addUser(String username, String email, String password) {
         if(userRepository.existsByUsername(username)){
             return ResponseEntity.badRequest().body(new MessageResponse("Error:Username is already taken!"));
         }
@@ -44,7 +46,7 @@ public class UserService {
             return ResponseEntity.badRequest().body(new MessageResponse("Error:Email is already in user!"));
         }
         Set<Role> roleSet = new HashSet<>();
-        Role role = new Role(ERole.ROLE_USER);
+        Role role = roleRepository.findById(1).orElseThrow(() -> new RuntimeException("Error: Role is not found."));
         roleSet.add(role);
         User user = new User();
         user.setUsername(username);
@@ -104,17 +106,17 @@ public class UserService {
             strRoles.forEach(role -> {
                 switch (role) {
                     case "admin":
-                        Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
+                        Role adminRole = roleRepository.findById(3)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roleSet.add(adminRole);
                         break;
                     case "mod":
-                        Role modRole = roleRepository.findByName(ERole.ROLE_MODERATOR)
+                        Role modRole = roleRepository.findById(2)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roleSet.add(modRole);
                         break;
                     default:
-                        Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+                        Role userRole = roleRepository.findById(1)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roleSet.add(userRole);
                 }
@@ -131,6 +133,26 @@ public class UserService {
         }
 
     }
+
+//    public ResponseEntity<MessageResponse>  resetPassword(HttpServletRequest request, String email){
+//        User user = userRepository.findByEmail(email).get();
+//        if (user == null) {
+//            return ResponseEntity.badRequest().body(new MessageResponse("Error:User is not exist!"));
+//        }
+//        String token = UUID.randomUUID().toString();
+//        createPasswordResetTokenForUser(user, token);
+//        mailSender.send(constructResetTokenEmail(getAppUrl(request),
+//                request.getLocale(), token, user));
+//        return new GenericResponse(
+//                messages.getMessage("message.resetPasswordEmail", null,
+//                        request.getLocale()));
+//
+//    }
+//    public void createPasswordResetTokenForUser(User user, String token) {
+//        PasswordResetToken myToken = new PasswordResetToken(token, user);
+//        passwordTokenRepository.save(myToken);
+//    }
+
 
 
 }

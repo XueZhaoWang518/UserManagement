@@ -1,12 +1,9 @@
 package com.spring.usermanagement.controller;
 
-import com.spring.usermanagement.entity.User;
 import com.spring.usermanagement.payload.request.SigninRequest;
 import com.spring.usermanagement.payload.request.UpdateRoleRequest;
-import com.spring.usermanagement.repository.UserRepository;
 import com.spring.usermanagement.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;

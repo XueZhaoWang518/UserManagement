@@ -36,6 +36,9 @@ public class User{
     @NotBlank
     @Size(max=120)
     private String password;
+//
+//    @NotBlank
+//    private boolean isActive;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="user_roles",
