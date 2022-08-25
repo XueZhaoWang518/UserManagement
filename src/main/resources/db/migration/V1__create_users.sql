@@ -3,7 +3,8 @@ create table if not exists `users`(
     `id` int(11) auto_increment primary key not null ,
     `username` varchar(200) not null,
     `password` varchar(200) not null,
-    `email` varchar(200) not null
+    `email` varchar(200) not null,
+    `is_active` boolean not null
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 create table if not exists `roles`(

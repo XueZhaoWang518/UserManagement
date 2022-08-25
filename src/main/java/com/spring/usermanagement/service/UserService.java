@@ -53,6 +53,7 @@ public class UserService {
         user.setEmail(email);
         user.setPassword(encoder.encode(password));
         user.setRoles(roleSet);
+        user.set_active(true);
         userRepository.save(user);
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
 
