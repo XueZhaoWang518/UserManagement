@@ -1,5 +1,7 @@
 package com.spring.usermanagement.service;
 
+import com.spring.usermanagement.payload.response.RoleNotFoundException;
+import com.spring.usermanagement.payload.response.UserNotFoundException;
 import com.spring.usermanagement.entity.Role;
 import com.spring.usermanagement.entity.User;
 import com.spring.usermanagement.payload.response.JwtResponse;
@@ -79,59 +81,44 @@ public class UserService {
                 roles));
     }
 
-    public ResponseEntity<MessageResponse> updatePassword(String userMessage, String password) {
-        if(userRepository.existsByUsername(userMessage)){
-            User user = userRepository.findByUsername(userMessage).get();
-            user.setPassword(password);
-            userRepository.saveAndFlush(user);
-            return ResponseEntity.ok(new MessageResponse("User update password successfully!"));
-        }
-        else if(userRepository.existsByEmail(userMessage)){
-            User user = userRepository.findByUsername(userMessage).get();
-            user.setPassword(encoder.encode(password));
-            userRepository.saveAndFlush(user);
-            return ResponseEntity.ok(new MessageResponse("User update password successfully!"));
-        }
-        else{
-            return ResponseEntity.badRequest().body(new MessageResponse("Error:User is not exist!"));
-        }
+    public void updatePassword(Long id, String password) {
+        User user = userRepository.findById(id).orElseThrow(()->new UserNotFoundException());
+        user.setPassword(password);
+        userRepository.saveAndFlush(user);
+        return;
+
 
     }
 
-    public ResponseEntity<MessageResponse> updateRole(Long userId, Set<String> strRoles) {
+    public void updateRole(Long userId, Set<String> strRoles) {
         Set<Role> roleSet = new HashSet<>();
 
         if (strRoles == null) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error:Role is not found!"));
+            throw new RoleNotFoundException();
         } else {
             strRoles.forEach(role -> {
                 switch (role) {
                     case "admin":
                         Role adminRole = roleRepository.findById(3)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                                .orElseThrow(() -> new RoleNotFoundException());
                         roleSet.add(adminRole);
                         break;
                     case "mod":
                         Role modRole = roleRepository.findById(2)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                                .orElseThrow(() -> new RoleNotFoundException());
                         roleSet.add(modRole);
                         break;
                     default:
                         Role userRole = roleRepository.findById(1)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                                .orElseThrow(() -> new RoleNotFoundException());
                         roleSet.add(userRole);
                 }
             });
         }
-        if(userRepository.existsById(userId)){
-            User user = userRepository.findById(userId).get();
-            user.setRoles(roleSet);
-            userRepository.saveAndFlush(user);
-            return ResponseEntity.ok(new MessageResponse("User update roles successfully!"));
-        }
-        else{
-            return ResponseEntity.badRequest().body(new MessageResponse("Error:User is not exist!"));
-        }
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
+        user.setRoles(roleSet);
+        userRepository.saveAndFlush(user);
+        return;
 
     }
 
