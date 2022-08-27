@@ -1,6 +1,7 @@
 package com.spring.usermanagement.controller;
 
 import com.spring.usermanagement.payload.request.SigninRequest;
+import com.spring.usermanagement.payload.request.UpdateActiveRequest;
 import com.spring.usermanagement.payload.request.UpdatePasswordRequest;
 import com.spring.usermanagement.payload.request.UpdateRoleRequest;
 import com.spring.usermanagement.service.UserService;
@@ -39,6 +40,11 @@ public class UserController {
         userService.updateRole(updateRoleRequest.getId(), updateRoleRequest.getRoles());
     }
 
+    @PostMapping("/update/active")
+    @PreAuthorize("hasRole('ADMIN')")
+    public void updateUserActive(@Valid @RequestBody UpdateActiveRequest updateActiveRequest) {
+        userService.updateActive(updateActiveRequest.getId(), updateActiveRequest.isActiveStatus());
+    }
 
 
 

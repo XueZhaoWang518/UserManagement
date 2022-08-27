@@ -55,7 +55,7 @@ public class UserService {
         user.setEmail(email);
         user.setPassword(encoder.encode(password));
         user.setRoles(roleSet);
-        user.set_active(true);
+        user.setEnabled(true);
         userRepository.save(user);
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
 
@@ -119,6 +119,13 @@ public class UserService {
         user.setRoles(roleSet);
         userRepository.saveAndFlush(user);
         return;
+
+    }
+
+    public void updateActive(Long id, boolean isActiveStatus) {
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException());
+        user.setEnabled(isActiveStatus);
+        userRepository.saveAndFlush(user);
 
     }
 
