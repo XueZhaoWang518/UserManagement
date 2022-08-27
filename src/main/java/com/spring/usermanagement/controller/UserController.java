@@ -1,12 +1,12 @@
 package com.spring.usermanagement.controller;
 
-import com.spring.usermanagement.payload.request.SigninRequest;
+import com.spring.usermanagement.entity.User;
 import com.spring.usermanagement.payload.request.UpdateActiveRequest;
 import com.spring.usermanagement.payload.request.UpdatePasswordRequest;
 import com.spring.usermanagement.payload.request.UpdateRoleRequest;
 import com.spring.usermanagement.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +26,12 @@ public class UserController {
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public String userAccess() {
         return "Could see the user Content.";
+    }
+
+    @GetMapping("/admin/users?page={page}&size={pageSize}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Page<User> getUsers(@PathVariable int page, @PathVariable int pageSize) {
+        return userService.getUsers(page, pageSize);
     }
 
     @PostMapping("/update/password")

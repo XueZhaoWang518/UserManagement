@@ -12,6 +12,8 @@ import com.spring.usermanagement.repository.PasswordTokenRepository;
 import com.spring.usermanagement.security.jwt.JwtUtils;
 import com.spring.usermanagement.security.service.UserDetailsImpls;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -127,6 +129,10 @@ public class UserService {
         user.setEnabled(isActiveStatus);
         userRepository.saveAndFlush(user);
 
+    }
+
+    public Page<User> getUsers(Integer page, Integer pageSize){
+        return userRepository.findAll(PageRequest.of(page, pageSize));
     }
 
 //    public ResponseEntity<MessageResponse>  resetPassword(HttpServletRequest request, String email){
