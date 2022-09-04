@@ -1,10 +1,10 @@
 package com.spring.usermanagement.payload.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.Set;
-
 @Data
+@AllArgsConstructor
 public class SignupRequest {
     private String username;
 
