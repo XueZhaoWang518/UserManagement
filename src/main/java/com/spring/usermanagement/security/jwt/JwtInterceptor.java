@@ -22,7 +22,7 @@ public class JwtInterceptor implements HandlerInterceptor {
         // flag变量用于判断用户是否登录，默认为false
         boolean flag = false;
         //获取请求的路径进行判断
-        String servletPath = request.getServletPath();
+        String servletPath = request.getPathInfo();
         // 判断请求是否需要拦截
         for (String s : IGNORE_URL) {
             if (servletPath.contains(s)) {
