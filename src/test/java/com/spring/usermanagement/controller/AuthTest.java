@@ -42,10 +42,6 @@ public class AuthTest {
     @MockBean
     private UserService userService;
 
-//    @Before
-//    public void setUp() {
-//        mockMvc = MockMvcBuilders.standaloneSetup(new AuthController()).build();
-//    }
 
     public String mapToJson(Object obj) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
